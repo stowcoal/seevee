@@ -1,10 +1,9 @@
 var mongoose = require('mongoose');
 
 var connectionString = "mongodb://" + process.env.DB_USER + ":" + process.env.DB_PASS + "@" + process.env.DB_HOST + ":" + process.env.DB_PORT + "/" + process.env.DB_NAME;
-console.log(connectionString);
+
 var mongoOptions = {
-  userMongoClient: true,
-  safe: true
+  useMongoClient: true
 };
 
 mongoose.Promise=global.Promise;

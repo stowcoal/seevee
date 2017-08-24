@@ -1,14 +1,24 @@
 var express = require('express');
-var User = require('../models/user.js');
+var User = require('../models/user');
 
 var api = {};
 
-api.addUser = function(req, res) {
-  var user = new User(req.body.user);
-
+api.reg = function(user, cb) {
   user.save(function(err){
-    if(err) res.status(500);
-    res.status(200).json({ token: 1 });
+    cb(err, user.toObject());
+  });
+};
+api.auth = function(user, cb) {
+  User.findOne({email: user.email}, function(err, data){
+    if (!data)
+      return cb(err);
+    data.verifyPassword(user.password, function(err, isMatch){
+      if (isMatch){
+        return cb(err, data);
+      }
+      else
+        return cb(err);
+    });
   });
 };
 

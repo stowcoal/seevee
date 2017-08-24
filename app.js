@@ -1,7 +1,7 @@
 var express = require('express');
 require('dotenv').config();
 var path = require('path');
-//var favicon = require('serve-favicon');
+var favicon = require('serve-favicon');
 var logger = require('morgan');
 var cookieParser = require('cookie-parser');
 var bodyParser = require('body-parser');
@@ -13,6 +13,17 @@ var app = express();
 
 var db = require('./config/db');
 
+app.use(cookieParser());
+app.use(require('express-session')({
+  resave: false,
+  saveUninitialized: false,
+  secret: process.env.SESSION_SECRET
+}));
+
+app.use(function(req, res, next) {
+  res.locals.session = req.session;
+  next();
+});
 app.use(function(req, res, next){
   res.locals.showTests = app.get('env') !== 'production' && req.query.test === '1';
   next();
@@ -40,7 +51,6 @@ app.set('views', path.join(__dirname, 'views'));
 app.use(logger('dev'));
 app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({ extended: false }));
-app.use(cookieParser());
 app.use(express.static(path.join(__dirname, 'public')));
 
 app.use('/', index);

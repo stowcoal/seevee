@@ -24,4 +24,5 @@ router.get('/:id', function(req, res, next) {
   res.render('user.handlebars', {user: user});
 });
 
+
 module.exports = router;

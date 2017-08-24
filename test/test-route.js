@@ -39,6 +39,33 @@ describe('/signin', function(){
   });
 });
 
+describe('/signup', function(done){
+  it('should return 303 and set session', function(done){
+    request(app)
+      .post('/signup')
+      .send({email: 'testemail@test.com', password: 'test'})
+      .expect(303, done);
+  });
+});
+
+describe('/signup', function(done){
+  it('should return 303 and set session', function(done){
+    request(app)
+      .post('/signup')
+      .send({email: 'testemail@test.com', password: 'test'})
+      .expect(303, done);
+  });
+});
+
+describe('/signin', function(done){
+  it('should return 303 and set session', function(done){
+    request(app)
+      .post('/signin')
+      .send({email: 'testemail@test.com', password: 'test'})
+      .expect(303, done);
+  });
+});
+
 describe('/api', function(){
   describe('/signup', function(done){
     it('should return 200 and a token', function(done){
@@ -49,6 +76,7 @@ describe('/api', function(){
         .end(function(err, res) {
           expect(res.body).to.exist;
           expect(res.body).to.have.property('token');
+          expect(res.body.token).to.contain('JWT ');
           done();
         });
     });
