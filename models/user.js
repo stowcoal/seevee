@@ -19,25 +19,23 @@ var userSchema = new mongoose.Schema(
       last_name: {
         type: String
       },
-      address: {
-          street: {
-          type: String
-        },
-        city: {
-          type: String
-        },
-        state: {
-          type: String
-        },
-        zip: {
-          type: String
-        }
+      street: {
+        type: String
+      },
+      city: {
+        type: String
+      },
+      state: {
+        type: String
+      },
+      zip: {
+        type: String
       },
       phone: {
         type: String
       },
       email: {
-        type: String,
+        type: String
       }
     }
   }

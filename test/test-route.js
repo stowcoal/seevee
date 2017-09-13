@@ -5,10 +5,8 @@ var app = require('../app.js');
 var Cookies;
 
 var user = {
-  email: 'testemail@test.com',
   password: 'testpass',
-  username: 'testuser',
-  address: '123 test avenue'
+  username: 'testuser'
 }
 
 describe('/', function(){
@@ -85,13 +83,24 @@ describe('/signin', function(done){
         done();
       });
   });
+  it('should return 303 and have error when invalid credentials', function(done){
+    var baduser = user;
+    baduser.username = 'invalid';
+    request(app)
+      .post('/signin')
+      .send(baduser)
+      .expect(303)
+      .end(function(err, res){
+        res.headers['location'].should.include('err=Invalid%20credentials');
+      })
+  })
 });
 
 describe('/account', function(done){
   it('should return 200', function(done){
-    request(app)
-      .get('/account')
-      .expect(200, done);
+    var req = request(app).get('/account');
+    req.cookies = Cookies;
+    req.expect(200, done);
   });
   it('should return 303', function(done){
     var req = request(app).post('/account');

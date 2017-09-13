@@ -23,12 +23,23 @@ router.get('/signup', function(req, res, next) {
 });
 
 router.get('/account', function(req, res, next) {
+  if (!req.session.user)
+    return res.redirect(303, '/signin');
   res.render('account.handlebars', {});
 });
 
 router.post('/account', function(req, res, next) {
   var user = req.session.user;
   userController.edit(user._id, req.body, function(err, data){
+    req.session.user = data;
+    res.redirect(303, '/account');
+  });
+});
+
+router.post('/account/profile', function(req, res, next) {
+  var user = req.session.user;
+  console.log(req.body);
+  userController.editProfile(user._id, req.body, function(err, data){
     req.session.user = data;
     res.redirect(303, '/account');
   });
@@ -61,7 +72,7 @@ router.post('/signin', function(req, res, next) {
   var user = new User(req.body);
   userController.auth(user, function(err, data){
     if (err){
-      return res.redirect(303, '/signin');
+      return res.redirect(303, '/signin?err=' + err);
     }
     req.session.user = data;
     return res.redirect(303, '/account');
@@ -70,7 +81,7 @@ router.post('/signin', function(req, res, next) {
 
 router.get('/signout', function(req, res, next) {
   delete req.session.user;
-  res.redirect(303, '/');
+  res.redirect(303, '/signin');
 });
 
 module.exports = router;
