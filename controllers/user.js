@@ -11,13 +11,13 @@ api.reg = function(user, cb) {
 api.auth = function(user, cb) {
   User.findOne({username: user.username}, function(err, data){
     if (!data)
-      return cb("Invalid credentials");
+      return cb(err);
     data.verifyPassword(user.password, function(err, isMatch){
       if (isMatch){
         return cb(err, data);
       }
       else
-        return cb("Invalid credentials");
+        return cb(err);
     });
   });
 };

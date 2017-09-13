@@ -61,7 +61,13 @@ router.post('/signup', function(req, res, next) {
   var user = new User(req.body);
   userController.reg(user, function(err, data){
     if (err){
-      return res.redirect(303, '/signup');
+      if (err.name === 'MongoError' && err.code === 11000)
+        err = "Username already taken.";
+      else if (err.name === 'ValidationError')
+        err = "Please fill in all fields.";
+      else
+        err = "An error occurred during registration.";
+      return res.redirect(303, '/signup?err=' + err);
     }
     req.session.user = data;
     return res.redirect(303, '/account');
@@ -72,7 +78,10 @@ router.post('/signin', function(req, res, next) {
   var user = new User(req.body);
   userController.auth(user, function(err, data){
     if (err){
-      return res.redirect(303, '/signin?err=' + err);
+      return res.redirect(303, '/signin?err=' + 'An error occurred');
+    }
+    if (!data){
+      return res.redirect(303, '/signin?err=' + 'Invalid credentials');
     }
     req.session.user = data;
     return res.redirect(303, '/account');

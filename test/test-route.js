@@ -47,6 +47,13 @@ describe('/signin', function(){
 });
 
 describe('/signup', function(done){
+  it('should return 303 and return error when missing requirements', function(done){
+    request(app)
+      .post('/signup')
+      .send({username: '', password: ''})
+      .expect(303)
+      .expect('Location', '/signup?err=Please%20fill%20in%20all%20fields.', done);
+  });
   it('should return 303 and set session', function(done){
     request(app)
       .post('/signup')
@@ -56,6 +63,13 @@ describe('/signup', function(done){
         Cookies = res.headers['set-cookie'].pop().split(';')[0];
         done();
       });
+  });
+  it('should return 303 and return error when duplicate', function(done){
+    request(app)
+      .post('/signup')
+      .send(user)
+      .expect(303)
+      .expect('Location', '/signup?err=Username%20already%20taken.', done);
   });
 });
 
@@ -90,9 +104,8 @@ describe('/signin', function(done){
       .post('/signin')
       .send(baduser)
       .expect(303)
-      .end(function(err, res){
-        res.headers['location'].should.include('err=Invalid%20credentials');
-      })
+      .expect('Location', '/signin?err=Invalid%20credentials')
+      .end(done)
   })
 });
 

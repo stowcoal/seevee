@@ -5,6 +5,11 @@
   </div>
   <div class="card">
     <div class="card-body">
+      {{#if query.err}}
+      <div class="alert alert-danger" role="alert">
+        {{query.err}}
+      </div>
+      {{/if}}
       <form method="post">
         <div class="form-group">
           <label>Username</label>

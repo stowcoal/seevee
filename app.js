@@ -25,6 +25,11 @@ app.use(function(req, res, next) {
   next();
 });
 app.use(function(req, res, next){
+  res.locals.params = req.params;
+  res.locals.query = req.query;
+  next();
+});
+app.use(function(req, res, next){
   res.locals.showTests = app.get('env') !== 'production' && req.query.test === '1';
   next();
 });
