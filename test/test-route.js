@@ -1,6 +1,15 @@
 var expect = require('chai').expect;
 var request = require('supertest');
+var agent = require('superagent').agent();
 var app = require('../app.js');
+var Cookies;
+
+var user = {
+  email: 'testemail@test.com',
+  password: 'testpass',
+  username: 'testuser',
+  address: '123 test avenue'
+}
 
 describe('/', function(){
   it('should return 200', function(done) {
@@ -43,17 +52,25 @@ describe('/signup', function(done){
   it('should return 303 and set session', function(done){
     request(app)
       .post('/signup')
-      .send({email: 'testemail@test.com', password: 'test'})
-      .expect(303, done);
+      .send(user)
+      .expect(303)
+      .end(function(err, res){
+        Cookies = res.headers['set-cookie'].pop().split(';')[0];
+        done();
+      });
   });
 });
 
-describe('/signup', function(done){
-  it('should return 303 and set session', function(done){
-    request(app)
-      .post('/signup')
-      .send({email: 'testemail@test.com', password: 'test'})
-      .expect(303, done);
+describe('/signout', function(done){
+  it('should clear session', function(done){
+    var req = request(app)
+      .get('/signout');
+    req.cookies = Cookies;
+    req.expect(303)
+      .end(function(err, res){
+        Cookies = {};
+        done();
+      });
   });
 });
 
@@ -61,8 +78,35 @@ describe('/signin', function(done){
   it('should return 303 and set session', function(done){
     request(app)
       .post('/signin')
-      .send({email: 'testemail@test.com', password: 'test'})
+      .send(user)
+      .expect(303)
+      .end(function(err, res){
+        Cookies = res.headers['set-cookie'].pop().split(';')[0];
+        done();
+      });
+  });
+});
+
+describe('/account', function(done){
+  it('should return 200', function(done){
+    request(app)
+      .get('/account')
+      .expect(200, done);
+  });
+  it('should return 303', function(done){
+    var req = request(app).post('/account');
+    req.cookies = Cookies;
+    req.send(user)
       .expect(303, done);
+  });
+});
+
+describe('/account/delete', function(done){
+  it('should delete user logout and redirect to home', function(done){
+    var req = request(app)
+      .post('/account/delete');
+    req.cookies = Cookies;
+    req.expect(303, done);
   });
 });
 
