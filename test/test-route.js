@@ -109,24 +109,42 @@ describe('/signin', function(done){
   })
 });
 
-describe('/account', function(done){
+describe('/profile', function(done){
   it('should return 200', function(done){
-    var req = request(app).get('/account');
+    var req = request(app).get('/profile');
     req.cookies = Cookies;
     req.expect(200, done);
   });
   it('should return 303', function(done){
-    var req = request(app).post('/account');
+    var req = request(app).post('/profile');
     req.cookies = Cookies;
     req.send(user)
       .expect(303, done);
   });
 });
 
-describe('/account/delete', function(done){
+describe('/employer', function(done){
+  it('should return 303', function(done){
+    var req = request(app).post('/employer');
+    req.cookies = Cookies;
+    req.send({employer: 'test'})
+      .expect(303, done);
+  });
+});
+
+describe('/employer/delete', function(done){
+  it('should return 303', function(done){
+    var req = request(app).post('/employer/delete');
+    req.cookies = Cookies;
+    req.send({employerId: 0})
+      .expect(303, done);
+  });
+});
+
+describe('/profile/delete', function(done){
   it('should delete user logout and redirect to home', function(done){
     var req = request(app)
-      .post('/account/delete');
+      .post('/profile/delete');
     req.cookies = Cookies;
     req.expect(303, done);
   });

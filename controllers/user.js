@@ -42,6 +42,31 @@ api.editProfile = function(id, profile, cb) {
     });
   });
 };
+api.addEmployer = function(id, employer, cb) {
+  User.findOne({_id: id}, function(err, data){
+    if (!data)
+      return cb(err);
+    if (!employer || !employer.name)
+      return cb(err);
+    data.employers.push(employer);
+    data.save(function(err){
+      cb(err, data.toObject());
+    });
+  });
+};
+api.deleteEmployer = function(id, employerId, cb) {
+  User.findOne({_id: id}, function(err, data){
+    if (!data)
+      return cb(err);
+    data.employers = data.employers.filter(function(employer){
+      return employer._id != employerId;
+    });
+
+    data.save(function(err){
+      cb(err, data.toObject());
+    });
+  });
+};
 api.delete = function(id, cb) {
   User.deleteOne({_id: id}, cb);
 };

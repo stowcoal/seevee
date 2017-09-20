@@ -1,0 +1,40 @@
+{{> sidebar this}}
+<div class="col-10 ml-sm-auto">
+  <div class="container-fluid py-2">
+    <form method="post" action="/profile">
+      <div class="form-group">
+        <label>First Name:</label>
+        <input type="text" name="first_name" class="form-control" value="{{session.user.profile.first_name}}" />
+      </div>
+      <div class="form-group">
+        <label>Last Name:</label>
+        <input type="text" name="last_name" class="form-control" value="{{session.user.profile.last_name}}" />
+      </div>
+      <div class="form-group">
+        <label>Email:</label>
+        <input type="email" name="email" class="form-control" value="{{session.user.profile.email}}" />
+      </div>
+      <div class="form-group">
+        <label>Street:</label>
+        <input type="text" name="street" class="form-control" value="{{session.user.profile.street}}" />
+      </div>
+      <div class="form-group">
+        <label>City:</label>
+        <input type="text" name="city" class="form-control" value="{{session.user.profile.city}}" />
+      </div>
+      <div class="form-group">
+        <label>State:</label>
+        <input type="text" name="state" class="form-control" value="{{session.user.profile.state}}" />
+      </div>
+      <div class="form-group">
+        <label>Zip:</label>
+        <input type="text" name="zip" class="form-control" value="{{session.user.profile.zip}}" />
+      </div>
+      <div class="form-group">
+        <label>Phone:</label>
+        <input type="text" name="phone" class="form-control" value="{{session.user.profile.phone}}" />
+      </div>
+      <button type="submit" class="btn btn-primary">Save</button>
+    </form>
+  </div>
+</div>

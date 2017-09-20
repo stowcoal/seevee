@@ -1,0 +1,26 @@
+{{> sidebar this}}
+<div class="col-10 ml-sm-auto">
+  <div class="container-fluid py-2">
+    <ul class="list-group py-2">
+      {{#each session.user.employers}}
+      <li class="list-group-item">
+        {{this.name}}
+        <button type="button" class="close" onclick="$('#{{this._id}}').submit();">
+          <span aria-hidden="true">&times;</span>
+        </button>
+        <form method="post" action="employer/delete" id="{{this._id}}" hidden="true">
+          <input type="hidden" name="employerId" value="{{this._id}}" />
+        </form>
+      </li>
+      {{/each}}
+    </ul>
+    <form method="post" action="/employer">
+      <div class="form-group collapse" id="employer-collapse">
+        <label>New Employer</label>
+        <input type="text" name="employer" class="form-control" value="{{this.name}}" />
+      </div>
+      <button type="button" class="btn btn-success" data-toggle="collapse" data-target="#employer-collapse">Add Employer</button>
+      <button type="submit" class="btn btn-primary">Save</button>
+    </form>
+  </div>
+</div>

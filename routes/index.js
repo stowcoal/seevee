@@ -22,30 +22,66 @@ router.get('/signup', function(req, res, next) {
   res.render('signup.handlebars', {});
 });
 
-router.get('/account', function(req, res, next) {
+router.get('/profile', function(req, res, next) {
   if (!req.session.user)
     return res.redirect(303, '/signin');
-  res.render('account.handlebars', {});
+  res.render('profile.handlebars', {'profile': 'active'});
+});
+
+router.get('/experience', function(req, res, next) {
+  if (!req.session.user)
+    return res.redirect(303, '/signin');
+  res.render('experience.handlebars', {'experience': 'active'});
+});
+
+router.get('/security', function(req, res, next) {
+  if (!req.session.user)
+    return res.redirect(303, '/signin');
+  res.render('security.handlebars', {'security': 'active'});
 });
 
 router.post('/account', function(req, res, next) {
   var user = req.session.user;
   userController.edit(user._id, req.body, function(err, data){
-    req.session.user = data;
-    res.redirect(303, '/account');
+    if (data)
+      req.session.user = data;
+    res.redirect(303, req.headers.referer);
   });
 });
 
-router.post('/account/profile', function(req, res, next) {
+router.post('/profile', function(req, res, next) {
   var user = req.session.user;
-  console.log(req.body);
   userController.editProfile(user._id, req.body, function(err, data){
-    req.session.user = data;
-    res.redirect(303, '/account');
+    if(data)
+      req.session.user = data;
+    res.redirect(303, req.headers.referer);
   });
 });
 
-router.post('/account/delete', function(req, res, next) {
+router.post('/employer', function(req, res, next) {
+  var user = req.session.user;
+  var employer = {};
+  if (req.body.employer)
+  {
+    employer.name = req.body.employer;
+  }
+  userController.addEmployer(user._id, employer, function(err, data){
+    if (data)
+      req.session.user = data;
+    res.redirect(303, req.headers.referer);
+  });
+});
+
+router.post('/employer/delete', function(req, res, next) {
+  var user = req.session.user;
+  userController.deleteEmployer(user._id, req.body.employerId, function(err, data){
+    if (data)
+      req.session.user = data;
+    res.redirect(303, req.headers.referer);
+  });
+});
+
+router.post('/profile/delete', function(req, res, next) {
   var user = req.session.user;
   userController.delete(user._id, function(err){
     delete req.session.user;
@@ -70,7 +106,7 @@ router.post('/signup', function(req, res, next) {
       return res.redirect(303, '/signup?err=' + err);
     }
     req.session.user = data;
-    return res.redirect(303, '/account');
+    return res.redirect(303, '/profile');
   });
 });
 
@@ -84,7 +120,7 @@ router.post('/signin', function(req, res, next) {
       return res.redirect(303, '/signin?err=' + 'Invalid credentials');
     }
     req.session.user = data;
-    return res.redirect(303, '/account');
+    return res.redirect(303, '/profile');
   });
 });
 

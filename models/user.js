@@ -37,7 +37,15 @@ var userSchema = new mongoose.Schema(
       email: {
         type: String
       }
-    }
+    },
+    employers: [
+      {
+        name : {
+          type: String,
+          required: true
+        }
+      }
+    ]
   }
 );
 

@@ -1,0 +1,16 @@
+{{> sidebar this }}
+<div class="col-10 ml-sm-auto">
+  <div class="container-fluid py-2">
+    <form method="post">
+      <div class="form-group">
+        <label>Username:</label>
+        <input type="text" name="username" class="form-control" value="{{session.user.username}}" />
+      </div>
+      <div class="form-group">
+        <label>Password:</label>
+        <input type="password" name="password" class="form-control" value="{{session.user.password}}" />
+      </div>
+      <button type="submit" class="btn btn-primary">Save</button>
+    </form>
+  </div>
+</div>
