@@ -1,0 +1,17 @@
+{{> sidebar this}}
+<div class="col-10 ml-sm-auto">
+  <div class="container-fluid py-2">
+    <form method="post" action="/employer" id="upsertForm">
+      {{#if employer._id}}
+      <input type="hidden" name="_id" value="{{employer._id}}" />
+      {{/if}}
+      <div class="form-group">
+        <label>Name</label>
+        <input type="text" name="name" class="form-control" value="{{employer.name}}" />
+      </div>
+    </form>
+    <form method="post" action="/employer/delete/{{employer._id}}" id="deleteForm"></form>
+    <button class="btn btn-primary" onclick="$('#upsertForm').submit();">Save</button>
+    <button class="btn btn-danger float-right" onclick="$('#deleteForm').submit();">Delete</button>
+  </div>
+</div>

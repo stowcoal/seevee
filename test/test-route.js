@@ -124,6 +124,11 @@ describe('/profile', function(done){
 });
 
 describe('/employer', function(done){
+  it('should return 200', function(done){
+    var req = request(app).get('/employer');
+    req.cookies = Cookies;
+    req.expect(200, done);
+  })
   it('should return 303', function(done){
     var req = request(app).post('/employer');
     req.cookies = Cookies;
@@ -132,12 +137,11 @@ describe('/employer', function(done){
   });
 });
 
-describe('/employer/delete', function(done){
+describe('/employer/delete/0', function(done){
   it('should return 303', function(done){
-    var req = request(app).post('/employer/delete');
+    var req = request(app).post('/employer/delete/0');
     req.cookies = Cookies;
-    req.send({employerId: 0})
-      .expect(303, done);
+    req.expect(303, done);
   });
 });
 
