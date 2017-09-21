@@ -127,35 +127,72 @@ describe('/profile', function(done){
   });
 });
 
-describe('/employer', function(done){
+describe('/experience', function(done){
   it('should return 200', function(done){
-    var req = request(app).get('/employer');
+    var req = request(app).get('/experience');
     req.cookies = Cookies;
     req.expect(200, done);
   })
   it('should return 303', function(done){
-    var req = request(app).post('/employer');
+    var req = request(app).post('/experience');
     req.cookies = Cookies;
-    req.send({name: 'test'})
+    req.send({institution: 'test', role: 'test'})
       .expect(303)
-      .end(done);
+      .end(function(err, res){
+        User.findOne({username: user.username}, function(err, data){
+          user = data;
+          expect(data.experiences[0].role).to.equal('test');
+          expect(data.experiences[0].institution).to.equal('test');
+          done();
+        });
+      });
+  });
+  it('should return 303 and change the role and institution', function(done){
+    var req = request(app).post('/experience');
+    req.cookies = Cookies;
+    req.send({institution: 'changed', role: 'changed', _id: user.experiences[0]._id})
+      .expect(303)
+      .end(function(err, res){
+        User.findOne({username: user.username}, function(err, data){
+          user = data;
+          expect(data.experiences[0].role).to.equal('changed');
+          expect(data.experiences[0].institution).to.equal('changed');
+          done();
+        });
+      });
   });
 });
 
-describe('/employer/:id/details', function(done){
+describe('/experience/:id/detail', function(done){
   it('should return 303', function(done){
-    User.findOne({username: user.username}, function(err, data){
-      user = data;
-      var req = request(app).post('/employer/' + user.employers[0]._id + '/details');
-      req.cookies = Cookies;
-      req.expect(303, done);
+    var req = request(app).post('/experience/' + user.experiences[0]._id + '/detail');
+    req.cookies = Cookies;
+    req.expect(303)
+      .end(function(err, res){
+        User.findOne({username: user.username}, function(err, data){
+          user = data;
+          expect(data.experiences[0].details.length).to.equal(1);
+          done();
+        });
+      })
+  });
+  it('should return 303 and change the detail', function(done){
+    var req = request(app).post('/experience/' + user.experiences[0]._id + '/detail');
+    req.cookies = Cookies;
+    req.send({description: 'changed', _id: user.experiences[0].details[0]._id})
+      .expect(303)
+      .end(function(err, res){
+        User.findOne({username: user.username}, function(err, data){
+          expect(data.experiences[0].details[0].description).to.equal('changed');
+          done();
+        });
     });
   });
 });
 
-describe('/employer/:id/delete', function(done){
+describe('/experience/:id/delete', function(done){
   it('should return 303', function(done){
-    var req = request(app).post('/employer/' + user.employers[0]._id + '/delete');
+    var req = request(app).post('/experience/' + user.experiences[0]._id + '/delete');
     req.cookies = Cookies;
     req.expect(303, done);
   });

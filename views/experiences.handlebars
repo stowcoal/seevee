@@ -1,0 +1,13 @@
+{{> sidebar experience='active'}}
+<div class="col-10 ml-sm-auto">
+  <div class="container-fluid py-2">
+    <a class='btn btn-success' href="/experience">New Experience</a>
+    <ul class="list-group py-2">
+      {{#each session.user.experiences}}
+      <li class="list-group-item">
+        <a href="/experience/{{this._id}}">{{this.institution}} - {{this.role}}</a>
+      </li>
+      {{/each}}
+    </ul>
+  </div>
+</div>

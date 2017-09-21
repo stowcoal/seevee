@@ -52,51 +52,59 @@ api.editProfile = function(id, profile, cb) {
     });
   });
 };
-api.upsertEmployer = function(id, employer, cb) {
+api.upsertExperience = function(id, experience, cb) {
   User.findOne({_id: id}, function(err, data){
     if (!data)
       return cb(err);
-    if (!employer || !employer.name)
+    if (!experience)
       return cb(err);
-    if (employer._id){
-      var index = data.employers.findIndex(function(e){
-        return e._id == employer._id;
+    if (experience._id){
+      var e = data.experiences.find(function(e){
+        return e._id == experience._id;
       });
-      if (index > -1){
-        data.employers[index].name = employer.name;
+      if (e._id){
+        e.institution = experience.institution;
+        e.role = experience.role;
       }
     }
     else {
-      data.employers.push(employer);
+      data.experiences.push(experience);
     }
     data.save(function(err){
       cb(err, data.toObject());
     });
   });
 };
-api.upsertEmployerDetail = function(userId, employerId, cb){
+api.upsertExperienceDetail = function(userId, experienceId, detail, cb){
   User.findOne({_id: userId}, function(err, data){
     if(!data)
       return cb(err);
-    var index = data.employers.findIndex(function(employer){
-      return employer._id == employerId;
+    var experience = data.experiences.find(function(experience){
+      return experience._id == experienceId;
     });
-    data.employers[index].details.push({name: 'New Detail', description: '', tags: []});
-
+    if (detail._id){
+      var index = experience.details.findIndex(function(d){
+        return d._id == detail._id;
+      });
+      experience.details[index] = detail;
+    }
+    else {
+      experience.details.push({description: 'New Detail', tags: []});
+    }
     data.save(function(err){
       cb(err, data.toObject());
     });
   });
 };
-api.deleteEmployerDetail = function(userId, employerId, detailId, cb) {
+api.deleteExperienceDetail = function(userId, experienceId, detailId, cb) {
   User.findOne({_id: userId}, function(err, data){
     if (!data)
       return cb(err);
-    var employer = data.employers.find(function(employer){
-      return employer._id == employerId;
+    var experience = data.experiences.find(function(experience){
+      return experience._id == experienceId;
     });
-    if (employer){
-      employer.details = employer.details.filter(function(detail){
+    if (experience){
+      experience.details = experience.details.filter(function(detail){
         return detail._id != detailId;
       });
     }
@@ -105,12 +113,12 @@ api.deleteEmployerDetail = function(userId, employerId, detailId, cb) {
     });
   });
 };
-api.deleteEmployer = function(id, employerId, cb) {
+api.deleteExperience = function(id, experienceId, cb) {
   User.findOne({_id: id}, function(err, data){
     if (!data)
       return cb(err);
-    data.employers = data.employers.filter(function(employer){
-      return employer._id != employerId;
+    data.experiences = data.experiences.filter(function(experience){
+      return experience._id != experienceId;
     });
 
     data.save(function(err){

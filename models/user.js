@@ -38,17 +38,16 @@ var userSchema = new mongoose.Schema(
         type: String
       }
     },
-    employers: [
+    experiences: [
       {
-        name : {
-          type: String,
-          required: true
+        institution : {
+          type: String
+        },
+        role: {
+          type: String
         },
         details: [
           {
-            name: {
-              type: String
-            },
             description: {
               type: String
             },
