@@ -2,11 +2,17 @@ var expect = require('chai').expect;
 var request = require('supertest');
 var agent = require('superagent').agent();
 var app = require('../app.js');
+var User = require('../models/user');
 var Cookies;
 
 var user = {
   password: 'testpass',
   username: 'testuser'
+}
+
+var invalidUser = {
+  password: 'invalid',
+  username: 'invalid'
 }
 
 describe('/', function(){
@@ -98,11 +104,9 @@ describe('/signin', function(done){
       });
   });
   it('should return 303 and have error when invalid credentials', function(done){
-    var baduser = user;
-    baduser.username = 'invalid';
     request(app)
       .post('/signin')
-      .send(baduser)
+      .send(invalidUser)
       .expect(303)
       .expect('Location', '/signin?err=Invalid%20credentials')
       .end(done)
@@ -132,14 +136,26 @@ describe('/employer', function(done){
   it('should return 303', function(done){
     var req = request(app).post('/employer');
     req.cookies = Cookies;
-    req.send({employer: 'test'})
-      .expect(303, done);
+    req.send({name: 'test'})
+      .expect(303)
+      .end(done);
   });
 });
 
-describe('/employer/delete/0', function(done){
+describe('/employer/:id/details/:type', function(done){
   it('should return 303', function(done){
-    var req = request(app).post('/employer/delete/0');
+    User.findOne({username: user.username}, function(err, data){
+      user = data;
+      var req = request(app).post('/employer/' + user.employers[0]._id + '/details/roles');
+      req.cookies = Cookies;
+      req.expect(303, done);
+    });
+  });
+});
+
+describe('/employer/:id/delete', function(done){
+  it('should return 303', function(done){
+    var req = request(app).post('/employer/' + user.employers[0]._id + '/delete');
     req.cookies = Cookies;
     req.expect(303, done);
   });

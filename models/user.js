@@ -43,7 +43,22 @@ var userSchema = new mongoose.Schema(
         name : {
           type: String,
           required: true
-        }
+        },
+        details: [
+          {
+            name: {
+              type: String
+            },
+            description: {
+              type: String
+            },
+            tags: [
+              {
+                type: String
+              }
+            ]
+          }
+        ],
       }
     ]
   }

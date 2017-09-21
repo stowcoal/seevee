@@ -3,6 +3,16 @@ var User = require('../models/user');
 
 var api = {};
 
+api.getAll = function(cb) {
+  User.find({}, function(err, data){
+    return cb(err, data);
+  });
+};
+api.get = function(id, cb) {
+  User.findOne({_id: id}, function(err, data){
+    return cb(err, data);
+  });
+};
 api.reg = function(user, cb) {
   user.save(function(err){
     cb(err, user.toObject());
@@ -53,19 +63,48 @@ api.upsertEmployer = function(id, employer, cb) {
         return e._id == employer._id;
       });
       if (index > -1){
-        data.employers[index] = employer;
+        data.employers[index].name = employer.name;
       }
     }
     else {
-      console.log(employer);
       data.employers.push(employer);
     }
     data.save(function(err){
-      console.log(err);
       cb(err, data.toObject());
     });
   });
 };
+api.upsertEmployerDetail = function(userId, employerId, cb){
+  User.findOne({_id: userId}, function(err, data){
+    if(!data)
+      return cb(err);
+    var index = data.employers.findIndex(function(employer){
+      return employer._id == employerId;
+    });
+    data.employers[index].details.push({name: 'New Detail', description: '', tags: []});
+
+    data.save(function(err){
+      cb(err, data.toObject());
+    });
+  });
+};
+api.deleteEmployerDetail = function(userId, employerId, detailId, cb) {
+  User.findOne({_id: userId}, function(err, data){
+    if (!data)
+      return cb(err);
+    var employer = data.employers.find(function(employer){
+      return employer._id == employerId;
+    });
+    if (employer){
+      employer.details = employer.details.filter(function(detail){
+        return detail._id != detailId;
+      });
+    }
+    data.save(function(err){
+      cb(err, data.toObject());
+    });
+  });
+;}
 api.deleteEmployer = function(id, employerId, cb) {
   User.findOne({_id: id}, function(err, data){
     if (!data)

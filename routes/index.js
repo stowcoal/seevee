@@ -31,6 +31,7 @@ router.get('/profile', function(req, res, next) {
 router.get('/experience', function(req, res, next) {
   if (!req.session.user)
     return res.redirect(303, '/signin');
+
   res.render('experience.handlebars', {'experience': 'active'});
 });
 
@@ -64,14 +65,13 @@ router.post('/profile', function(req, res, next) {
 router.post('/employer', function(req, res, next) {
   var user = req.session.user;
   userController.upsertEmployer(user._id, req.body, function(err, data){
-    console.log(data);
     if (data)
       req.session.user = data;
     res.redirect(303, '/experience');
   });
 });
 
-router.post('/employer/delete/:id', function(req, res, next) {
+router.post('/employer/:id/delete', function(req, res, next) {
   var user = req.session.user;
   userController.deleteEmployer(user._id, req.params.id, function(err, data){
     if (data)
@@ -79,6 +79,25 @@ router.post('/employer/delete/:id', function(req, res, next) {
     res.redirect(303, '/experience');
   });
 });
+
+router.post('/employer/:id/details/:id?', function(req, res, next) {
+  var user = req.session.user;
+  userController.upsertEmployerDetail(user._id, req.params.id, function(err, data){
+    if (data)
+      req.session.user = data;
+    res.redirect(303, req.headers.referer);
+  });
+});
+
+router.post('/employer/:employerId/details/:detailId/delete', function(req, res, next) {
+  var user = req.session.user;
+  userController.deleteEmployerDetail(user._id, req.params.employerId, req.params.detailId, function(err, data){
+    if (data)
+      req.session.user = data;
+    res.redirect(303, req.headers.referer);
+  })
+})
+
 
 router.post('/profile/delete', function(req, res, next) {
   var user = req.session.user;
