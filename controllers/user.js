@@ -104,7 +104,7 @@ api.deleteEmployerDetail = function(userId, employerId, detailId, cb) {
       cb(err, data.toObject());
     });
   });
-;}
+};
 api.deleteEmployer = function(id, employerId, cb) {
   User.findOne({_id: id}, function(err, data){
     if (!data)

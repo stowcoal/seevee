@@ -142,11 +142,11 @@ describe('/employer', function(done){
   });
 });
 
-describe('/employer/:id/details/:type', function(done){
+describe('/employer/:id/details', function(done){
   it('should return 303', function(done){
     User.findOne({username: user.username}, function(err, data){
       user = data;
-      var req = request(app).post('/employer/' + user.employers[0]._id + '/details/roles');
+      var req = request(app).post('/employer/' + user.employers[0]._id + '/details');
       req.cookies = Cookies;
       req.expect(303, done);
     });

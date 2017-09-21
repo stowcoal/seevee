@@ -95,8 +95,8 @@ router.post('/employer/:employerId/details/:detailId/delete', function(req, res,
     if (data)
       req.session.user = data;
     res.redirect(303, req.headers.referer);
-  })
-})
+  });
+});
 
 
 router.post('/profile/delete', function(req, res, next) {
