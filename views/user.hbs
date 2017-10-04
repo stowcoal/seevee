@@ -1,0 +1,25 @@
+<div class="container my-2">
+  <h3 class="text-center">{{user.profile.first_name}} {{user.profile.last_name}}</h1>
+  <hr />
+  <div class="text-center">{{user.profile.street}}</div>
+  <div class="text-center">{{user.profile.city}}, {{user.profile.state}} {{user.profile.zip}}</div>
+  <div class="text-center">{{user.profile.phone}}</div>
+  <div class="text-center">{{user.profile.email}}</div>
+  {{#each user.experiences}}
+  <div class="d-flex justify-content-between">
+    <div class="text-italic"><em>{{this.role}}</em></div>
+    <div class=""><em>{{this.start.month}} {{this.start.year}}-{{this.end.month}} {{this.end.year}}</em></div>
+  </div>
+  <div>
+    {{this.institution}}
+  </div>
+  <ul>
+    {{#each this.details}}
+    <li>
+      {{this.description}}
+    </li>
+    {{/each}}
+  </ul>
+  <br />
+  {{/each}}
+</div>

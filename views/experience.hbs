@@ -1,0 +1,97 @@
+{{> sidebar experience='active'}}
+<div class="col-10 ml-sm-auto">
+  <div class="container-fluid py-2">
+    <div>
+      <h3>Information</h3>
+      <form method="post" action="/experience" id="upsertForm">
+        {{#if experience._id}}
+        <input type="hidden" name="_id" value="{{experience._id}}" />
+        {{/if}}
+        <div class="form-group">
+          <label>Institution</label>
+          <input type="text" name="institution" class="form-control" value="{{experience.institution}}" />
+        </div>
+        <div class="form-group">
+          <label>Role</label>
+          <input type="text" name="role" class="form-control" value="{{experience.role}}" />
+        </div>
+        <div class="row form-group">
+          <div class="col-12">
+            <label>Start {{test}}</label>
+          </div>
+          <div class="col">
+            <select name="start[month]" class="form-control">
+              {{#select experience.start.month}}
+              <option value="January">January</option>
+              <option value="February">February</option>
+              <option value="March">March</option>
+              <option value="April">April</option>
+              <option value="May">May</option>
+              <option value="June">June</option>
+              <option value="July">July</option>
+              <option value="August">August</option>
+              <option value="September">September</option>
+              <option value="October">October</option>
+              <option value="November">November</option>
+              <option value="December">December</option>
+              {{/select}}
+            </select>
+          </div>
+          <div class="col">
+            <input type="number" name="start[year]" class="form-control" value="{{experience.start.year}}" />
+          </div>
+        </div>
+        <div class="row form-group">
+          <div class="col-12">
+            <label>End</label>
+          </div>
+          <div class="col">
+            <select name="end[month]" class="form-control" value="{{experience.end.month}}" >
+              {{#select experience.end.month}}
+              <option value="January">January</option>
+              <option value="February">February</option>
+              <option value="March">March</option>
+              <option value="April">April</option>
+              <option value="May">May</option>
+              <option value="June">June</option>
+              <option value="July">July</option>
+              <option value="August">August</option>
+              <option value="September">September</option>
+              <option value="October">October</option>
+              <option value="November">November</option>
+              <option value="December">December</option>
+              {{/select}}
+            </select>
+          </div>
+          <div class="col">
+            <input type="number" name="end[year]" class="form-control" value="{{experience.end.year}}" />
+          </div>
+        </div>
+        <h3>Details</h3>
+        {{#if experience.details}}
+        <a onclick="$('#detailsForm').submit();" href="#">Add a detail.</a>
+        {{#each experience.details}}
+          <input type="hidden" name="details[{{@index}}][_id]" value="{{this._id}}" />
+        <div class='form-group'>
+          <div class="input-group">
+            <input type="text" class="form-control" name="details[{{@index}}][description]" value="{{this.description}}" />
+            <span class="input-group-btn">
+              <button class="btn btn-secondary" type="button" onclick="$('#delete{{this._id}}').submit();"><i class="fa fa-remove" style="line-height:inherit"></i></button>
+            </span>
+          </div>
+        </div>
+        {{/each}}
+        {{else}}
+        <div>You have no details for this experience. <a onclick="$('#detailsForm').submit();" href="#">Add a detail.</a></div>
+        {{/if}}
+      </form>
+    </div>
+    {{#each experience.details}}
+    <form method="post" id="delete{{this._id}}" action="/experience/{{../experience._id}}/detail/{{this._id}}/delete" hidden></form>
+    {{/each}}
+    <form method="post" action="/experience/{{experience._id}}/delete" id="deleteForm"></form>
+    <form method="post" action="/experience/{{experience._id}}/detail" id="detailsForm"></form>
+    <button class="btn btn-primary" onclick="$('#upsertForm').submit();">Save</button>
+    <button class="btn btn-danger float-right" onclick="$('#deleteForm').submit();">Delete</button>
+  </div>
+</div>

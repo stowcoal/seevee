@@ -6,8 +6,18 @@ var logger = require('morgan');
 var cookieParser = require('cookie-parser');
 var bodyParser = require('body-parser');
 var exphbs = require('express-handlebars');
-var handlebars = require('handlebars');
-handlebars.registerHelper('lorem', require('handlebars-helper-lorem'));
+
+var hbs = exphbs.create({
+  extname: '.hbs',
+  defaultLayout: 'main',
+  partialsDir: [
+    'views/partials/'
+  ],
+  helpers: {
+    'lorem': require('handlebars-helper-lorem'),
+    'select': require('./views/helpers/select')
+  }
+});
 
 var app = express();
 
@@ -33,25 +43,28 @@ app.use(function(req, res, next){
   next();
 });
 
-var index = require('./routes/index');
+var index = require('./routes/root');
 var users = require('./routes/users');
 var api = require('./routes/api');
+var experience = require('./routes/experience');
 
 
 // view engine setup
-app.engine('handlebars', exphbs({defaultLayout: 'main'}));
+app.engine('hbs', hbs.engine);
 
+app.set('view engine', 'hbs');
 app.set('views', path.join(__dirname, 'views'));
 
 // uncomment after placing your favicon in /public
 app.use(favicon(path.join(__dirname, 'public', 'favicon.ico')));
 app.use(logger('dev'));
 app.use(bodyParser.json());
-app.use(bodyParser.urlencoded({ extended: false }));
+app.use(bodyParser.urlencoded({ extended: true }));
 app.use(express.static(path.join(__dirname, 'public')));
 
 app.use('/', index);
 app.use('/users', users);
+app.use('/experience', experience);
 app.use('/api', api);
 
 // catch 404 and forward to error handler

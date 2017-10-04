@@ -6,13 +6,13 @@ var userController = require('../controllers/user');
 router.get('/', function(req, res, next) {
   userController.getAll(function(err, data){
     var users = data;
-    res.render('users.handlebars', {users: users});
+    res.render('users.hbs', {users: users});
   });
 });
 router.get('/:id', function(req, res, next) {
   userController.get(req.params.id, function(err, data){
     var user = data;
-    res.render('user.handlebars', {user: user});
+    res.render('user.hbs', {user: user});
   });
 });
 

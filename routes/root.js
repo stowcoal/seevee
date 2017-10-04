@@ -5,7 +5,7 @@ var userController = require('../controllers/user');
 
 /* GET home page. */
 router.get('/', function(req, res, next) {
-  res.render('index.handlebars', {
+  res.render('index.hbs', {
     pageTestScript: '/test/tests-home.js'
   });
 });
@@ -15,41 +15,23 @@ router.get('/jade', function(req, res, next) {
 });
 
 router.get('/about', function(req, res, next) {
-  res.render('about.handlebars', {});
+  res.render('about.hbs', {});
 });
 
 router.get('/signup', function(req, res, next) {
-  res.render('signup.handlebars', {});
+  res.render('signup.hbs', {});
 });
 
 router.get('/profile', function(req, res, next) {
   if (!req.session.user)
     return res.redirect(303, '/signin');
-  res.render('profile.handlebars', {});
-});
-
-router.get('/experiences', function(req, res, next) {
-  if (!req.session.user)
-    return res.redirect(303, '/signin');
-
-  res.render('experiences.handlebars', {});
+  res.render('profile.hbs', {});
 });
 
 router.get('/security', function(req, res, next) {
   if (!req.session.user)
     return res.redirect(303, '/signin');
-  res.render('security.handlebars', {});
-});
-
-router.get('/experience/:id?', function(req, res, next) {
-  if (!req.session.user)
-    return res.redirect(303, '/signin');
-  var experience = req.session.user.experiences.find(function(e){
-    return e._id == req.params.id;
-  });
-  res.render('experience.handlebars', {
-      'experience': experience
-    });
+  res.render('security.hbs', {});
 });
 
 router.post('/profile', function(req, res, next) {
@@ -61,44 +43,6 @@ router.post('/profile', function(req, res, next) {
   });
 });
 
-router.post('/experience', function(req, res, next) {
-  var user = req.session.user;
-  userController.upsertExperience(user._id, req.body, function(err, data){
-    if (data)
-      req.session.user = data;
-    res.redirect(303, req.headers.referer);
-  });
-});
-
-router.post('/experience/:id/delete', function(req, res, next) {
-  var user = req.session.user;
-  userController.deleteExperience(user._id, req.params.id, function(err, data){
-    if (data)
-      req.session.user = data;
-    res.redirect(303, '/experiences');
-  });
-});
-
-router.post('/experience/:experienceId/detail', function(req, res, next) {
-  var user = req.session.user;
-  var detail = req.body;
-  userController.upsertExperienceDetail(user._id, req.params.experienceId, detail, function(err, data){
-    if (data)
-      req.session.user = data;
-    res.redirect(303, req.headers.referer);
-  });
-});
-
-router.post('/experience/:experienceId/detail/:detailId/delete', function(req, res, next) {
-  var user = req.session.user;
-  userController.deleteExperienceDetail(user._id, req.params.experienceId, req.params.detailId, function(err, data){
-    if (data)
-      req.session.user = data;
-    res.redirect(303, req.headers.referer);
-  });
-});
-
-
 router.post('/profile/delete', function(req, res, next) {
   var user = req.session.user;
   userController.delete(user._id, function(err){
@@ -108,7 +52,7 @@ router.post('/profile/delete', function(req, res, next) {
 });
 
 router.get('/signin', function(req, res, next) {
-  res.render('signin.handlebars', {});
+  res.render('signin.hbs', {});
 });
 
 router.post('/signup', function(req, res, next) {

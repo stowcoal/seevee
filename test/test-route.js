@@ -194,7 +194,9 @@ describe('/experience/:id/delete', function(done){
   it('should return 303', function(done){
     var req = request(app).post('/experience/' + user.experiences[0]._id + '/delete');
     req.cookies = Cookies;
-    req.expect(303, done);
+    req.expect(303)
+       .expect('Location', '/experience')
+       .end(done);
   });
 });
 

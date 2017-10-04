@@ -59,12 +59,11 @@ api.upsertExperience = function(id, experience, cb) {
     if (!experience)
       return cb(err);
     if (experience._id){
-      var e = data.experiences.find(function(e){
+      var index = data.experiences.findIndex(function(e){
         return e._id == experience._id;
       });
-      if (e._id){
-        e.institution = experience.institution;
-        e.role = experience.role;
+      if (index > -1){
+        data.experiences[index] = experience;
       }
     }
     else {

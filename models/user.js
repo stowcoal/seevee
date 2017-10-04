@@ -1,4 +1,5 @@
 var mongoose = require('mongoose');
+var DateOnly = require('mongoose-dateonly')(mongoose);
 var bcrypt = require('bcrypt');
 
 var userSchema = new mongoose.Schema(
@@ -46,16 +47,27 @@ var userSchema = new mongoose.Schema(
         role: {
           type: String
         },
+        start: {
+          month: {
+            type: String
+          },
+          year: {
+            type: Number
+          }
+        },
+        end: {
+          month: {
+            type: String
+          },
+          year: {
+            type: Number
+          }
+        },
         details: [
           {
             description: {
               type: String
-            },
-            tags: [
-              {
-                type: String
-              }
-            ]
+            }
           }
         ],
       }

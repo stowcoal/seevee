@@ -1,0 +1,14 @@
+{{> sidebar experience='active'}}
+<div class="col-10 ml-sm-auto">
+  <div class="container-fluid py-2">
+    <button class='btn btn-success' onclick="$('#experienceForm').submit();">New Experience</button>
+    <form method="post" action="/experience" id="experienceForm" hidden></form>
+    <ul class="list-group py-2">
+      {{#each session.user.experiences}}
+      <li class="list-group-item">
+        <a href="/experience/{{this._id}}">{{#if this.institution}}{{this.institution}} - {{this.role}}{{else}}New Experience{{/if}}</a>
+      </li>
+      {{/each}}
+    </ul>
+  </div>
+</div>
