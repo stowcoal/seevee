@@ -23,7 +23,8 @@ router.get('/:id', function(req, res, next) {
   //experience.start = moment(experience.start, 'YYYYMMDD').format('YYYY-MM-DD');
   //experience.end = moment(experience.end, 'YYYYMMDD').format('YYYY-MM-DD');
   res.render('experience.hbs', {
-      'experience': experience
+      'experience': experience,
+      active: 'experience'
     });
 });
 

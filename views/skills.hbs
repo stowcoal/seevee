@@ -1,0 +1,30 @@
+{{> sidebar active="skills"}}
+<div class="col-10 ml-sm-auto">
+  <div class="container-fluid py-2">
+    <div>
+{{#if session.user.skills}}
+      <form id="upsertForm" method="post" action="/skills/update">
+        <a onclick="$('#skillsForm').submit();" href="#">Add a Skill.</a>
+        {{#each session.user.skills}}
+          <input type="hidden" name="skills[{{@index}}][_id]" value="{{this._id}}" />
+          <div class='form-group'>
+            <div class="input-group">
+              <input type="text" class="form-control" name="skills[{{@index}}][description]" value="{{this.description}}" />
+              <span class="input-group-btn">
+                <button class="btn btn-secondary" type="button" onclick="$('#delete{{this._id}}').submit();"><i class="fa fa-remove" style="line-height:inherit"></i></button>
+              </span>
+            </div>
+          </div>
+{{/each}}
+{{else}}
+      <div>You have no skills. <a onclick="$('#skillsForm').submit();" href="#">Add a skill.</a></div>
+{{/if}}
+      </form>
+{{#each session.user.skills}}
+      <form method="post" id="delete{{this._id}}" action="/skills/{{this._id}}/delete" hidden></form>
+{{/each}}
+      <form method="post" id="skillsForm" action="/skills" hidden></form>
+    </div>
+    <button class="btn btn-primary" onclick="$('#upsertForm').submit();">Save</button>
+  </div>
+</div>

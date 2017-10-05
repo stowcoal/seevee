@@ -34,6 +34,80 @@ router.get('/security', function(req, res, next) {
   res.render('security.hbs', {});
 });
 
+router.get('/education', function(req, res, next) {
+  if (!req.session.user)
+    return res.redirect(303, '/signin');
+  res.render('education.hbs', {});
+});
+
+router.get('/education/:id', function(req, res, next) {
+  if (!req.session.user)
+    return res.redirect(303, '/signin');
+  var education = req.session.user.education.find(function(e){
+    return e._id == req.params.id;
+  });
+  res.render('school.hbs', {
+    education: education
+  });
+});
+
+router.post('/education', function(req, res, next) {
+  var user = req.session.user;
+  userController.upsertEducation(user._id, req.body, function(err, data){
+    if(data)
+      req.session.user = data;
+    res.redirect(303, req.headers.referer);
+  });
+});
+
+router.post('/education/:id/delete', function(req, res, next) {
+  var user = req.session.user;
+  userController.deleteEducation(user._id, req.params.id, function(err, data){
+    if(data)
+      req.session.user = data;
+    res.redirect(303, '/education');
+  });
+});
+
+router.get('/skills', function(req, res, next) {
+  if (!req.session.user)
+    return res.redirect(303, '/signin');
+  var skills = req.session.user.skills.find(function(e){
+    return e._id == req.params.id;
+  });
+  res.render('skills.hbs', {
+    skills: skills
+  });
+});
+
+router.post('/skills', function(req, res, next) {
+  var user = req.session.user;
+
+  userController.upsertSkill(user._id, req.body, function(err, data){
+    if(data)
+      req.session.user = data;
+    res.redirect(303, req.headers.referer);
+  });
+});
+
+router.post('/skills/update', function(req, res, next) {
+  var user = req.session.user;
+  userController.updateSkills(user._id, req.body.skills, function(err, data){
+    if(data)
+      req.session.user = data;
+    res.redirect(303, req.headers.referer);
+  });
+});
+
+router.post('/skills/:id/delete', function(req, res, next) {
+  var user = req.session.user;
+  userController.deleteSkill(user._id, req.params.id, function(err, data){
+    if(data)
+      req.session.user = data;
+    res.redirect(303, '/skills');
+  });
+});
+
 router.post('/profile', function(req, res, next) {
   var user = req.session.user;
   userController.editProfile(user._id, req.body, function(err, data){

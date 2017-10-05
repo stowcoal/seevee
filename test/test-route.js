@@ -190,6 +190,84 @@ describe('/experience/:id/detail', function(done){
   });
 });
 
+describe('/education', function(done){
+  it('should return 200', function(done){
+    var req = request(app).get('/education');
+    req.cookies = Cookies;
+    req.expect(200, done);
+  });
+});
+
+describe('/education/:id', function(done){
+  it('should return 200', function(done){
+    var req = request(app).get('/education/0');
+    req.cookies = Cookies;
+    req.expect(200, done);
+  });
+});
+
+describe('/skills', function(done){
+  it('should return 200', function(done){
+    var req = request(app).get('/skills');
+    req.cookies = Cookies;
+    req.expect(200, done);
+  });
+  it('should return 303 and add a skill', function(done){
+    var req = request(app).post('/skills');
+    req.cookies = Cookies;
+    req.send({description: 'test'})
+      .expect(303)
+      .end(function(err, res) {
+        User.findOne({username: user.username}, function(err, data){
+          user = data;
+          expect(data.skills[0].description).to.equal('test');
+          done();
+        });
+      });
+  });
+  it('should return 303 and update a skill', function(done){
+    var req = request(app).post('/skills');
+    req.cookies = Cookies;
+    user.skills[0].description = 'changed';
+    req.send(user.skills[0])
+      .expect(303)
+      .end(function(err, res) {
+        User.findOne({username: user.username}, function(err, data){
+          user = data;
+          expect(data.skills[0].description).to.equal('changed');
+          done();
+        });
+      });
+  });
+  it('should return 303 and update all skills', function(done){
+    var req = request(app).post('/skills/update');
+    req.cookies = Cookies;
+    user.skills[0].description = 'changed again';
+    req.send({skills: user.skills})
+      .expect(303)
+      .end(function(err, res) {
+        User.findOne({username: user.username}, function(err, data){
+          user = data;
+          expect(data.skills[0].description).to.equal('changed again');
+          done();
+        });
+      });
+  });
+  it('should return 303 delete skill', function(done){
+    var req = request(app).post('/skills/' + user.skills[0]._id + '/delete');
+    req.cookies = Cookies;
+    req.send()
+      .expect(303)
+      .end(function(err, res) {
+        User.findOne({username: user.username}, function(err, data){
+          user = data;
+          expect(data.skills.length).to.equal(0);
+          done();
+        });
+      });
+  });
+});
+
 describe('/experience/:id/delete', function(done){
   it('should return 303', function(done){
     var req = request(app).post('/experience/' + user.experiences[0]._id + '/delete');

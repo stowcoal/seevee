@@ -15,7 +15,8 @@ var hbs = exphbs.create({
   ],
   helpers: {
     'lorem': require('handlebars-helper-lorem'),
-    'select': require('./views/helpers/select')
+    'select': require('./views/helpers/select'),
+    'tablist': require('./views/helpers/tablist')
   }
 });
 

@@ -5,21 +5,70 @@
   <div class="text-center">{{user.profile.city}}, {{user.profile.state}} {{user.profile.zip}}</div>
   <div class="text-center">{{user.profile.phone}}</div>
   <div class="text-center">{{user.profile.email}}</div>
-  {{#each user.experiences}}
-  <div class="d-flex justify-content-between">
-    <div class="text-italic"><em>{{this.role}}</em></div>
-    <div class=""><em>{{this.start.month}} {{this.start.year}}-{{this.end.month}} {{this.end.year}}</em></div>
+{{#if user.education}}
+  <div class="row">
+    <div class="col-2">
+      <strong>Education</strong>
+    </div>
+    <div class="col-10">
+{{/if}}
+{{#each user.education}}
+      <div class="d-flex justify-content-between">
+        <div><em>{{this.institution}}</em></div>
+        <div><em>{{this.graduation.month}} {{this.graduation.year}}</em></div>
+      </div>
+      <div>
+        {{this.degree}}
+      </div>
+{{/each}}
+{{#if user.education}}
+    </div>
   </div>
-  <div>
-    {{this.institution}}
+{{/if}}
+<br />
+
+{{#if user.experiences}}
+  <div class="row">
+    <div class="col-2">
+      <strong>Experience</strong>
+    </div>
+    <div class="col-10">
+{{/if}}
+{{#each user.experiences}}
+      <div class="d-flex justify-content-between">
+        <div class="text-italic"><em>{{this.role}}</em></div>
+        <div class=""><em>{{this.start.month}} {{this.start.year}}-{{this.end.month}} {{this.end.year}}</em></div>
+      </div>
+      <div>
+        {{this.institution}}
+      </div>
+      <ul>
+{{#each this.details}}
+        <li>
+          {{this.description}}
+        </li>
+{{/each}}
+      </ul>
+      <br />
+{{/each}}
+    </div>
+{{#if user.experiences}}
   </div>
-  <ul>
-    {{#each this.details}}
-    <li>
-      {{this.description}}
-    </li>
-    {{/each}}
-  </ul>
-  <br />
-  {{/each}}
+{{/if}}
+<br />
+
+{{#if user.skills}}
+  <div class="row">
+    <div class="col-2">
+      <strong>Skills</strong>
+    </div>
+    <div class="col-10">
+{{/if}}
+{{#each user.skills}}
+  {{this.description}}{{#unless @last}},{{/unless}}
+{{/each}}
+{{#if user.skills}}
+    </div>
+  </div>
+{{/if}}
 </div>

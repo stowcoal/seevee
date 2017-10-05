@@ -1,0 +1,54 @@
+{{> sidebar active="education"}}
+<div class="col-10 ml-sm-auto">
+  <div class="container-fluid py-2">
+    <div>
+      <h3>Information</h3>
+      <form method="post" action="/education" id="upsertForm">
+        {{#if education._id}}
+        <input type="hidden" name="_id" value="{{education._id}}" />
+        {{/if}}
+        <div class="form-group">
+          <label>Institution</label>
+          <input type="text" name="institution" class="form-control" value="{{education.institution}}" />
+        </div>
+        <div class="form-group">
+          <label>Degree</label>
+          <input type="text" name="degree" class="form-control" value="{{education.degree}}" />
+        </div>
+        <div class="form-group">
+          <label>Honors</label>
+          <input type="text" name="honors" class="form-control" value="{{education.honors}}" />
+        </div>
+        <div class="row form-group">
+          <div class="col-12">
+            <label>Graduation</label>
+          </div>
+          <div class="col">
+            <select name="graduation[month]" class="form-control" >
+              {{#select education.graduation.month}}
+              <option value="January">January</option>
+              <option value="February">February</option>
+              <option value="March">March</option>
+              <option value="April">April</option>
+              <option value="May">May</option>
+              <option value="June">June</option>
+              <option value="July">July</option>
+              <option value="August">August</option>
+              <option value="September">September</option>
+              <option value="October">October</option>
+              <option value="November">November</option>
+              <option value="December">December</option>
+              {{/select}}
+            </select>
+          </div>
+          <div class="col">
+            <input type="number" name="graduation[year]" class="form-control" value="{{education.graduation.year}}" />
+          </div>
+        </div>
+      </form>
+    </div>
+    <form method="post" action="/education/{{education._id}}/delete" id="deleteForm"></form>
+    <button class="btn btn-primary" onclick="$('#upsertForm').submit();">Save</button>
+    <button class="btn btn-danger float-right" onclick="$('#deleteForm').submit();">Delete</button>
+  </div>
+</div>

@@ -125,8 +125,98 @@ api.deleteExperience = function(id, experienceId, cb) {
     });
   });
 };
+
 api.delete = function(id, cb) {
   User.deleteOne({_id: id}, cb);
+};
+
+api.upsertEducation = function(id, education, cb) {
+  User.findOne({_id: id}, function(err, data){
+    if (!data)
+      return cb(err);
+    if (!education)
+      return cb(err);
+    if (education._id){
+      var index = data.education.findIndex(function(e){
+        return e._id == education._id;
+      });
+      if (index > -1){
+        data.education[index] = education;
+      }
+    }
+    else {
+      data.education.push(education);
+    }
+    data.save(function(err){
+      cb(err, data.toObject());
+    });
+  });
+};
+
+api.deleteEducation = function(id, educationId, cb) {
+  User.findOne({_id: id}, function(err, data){
+    if (!data)
+      return cb(err);
+    data.education = data.education.filter(function(education){
+      return education._id != educationId;
+    });
+
+    data.save(function(err){
+      cb(err, data.toObject());
+    });
+  });
+};
+
+api.updateSkills = function(id, skills, cb) {
+  User.findOne({_id: id}, function(err, data){
+    if (!data)
+      return cb(err);
+    if (!skills)
+      return cb(err);
+
+    data.skills = skills;
+
+    data.save(function(err){
+      cb(err, data.toObject());
+    });
+  });
+};
+
+api.upsertSkill = function(id, skill, cb) {
+  User.findOne({_id: id}, function(err, data){
+    if (!data)
+      return cb(err);
+    if (!skill)
+      return cb(err);
+    if (skill._id){
+      var index = data.skills.findIndex(function(e){
+        return e._id == skill._id;
+      });
+      if (index > -1){
+        data.skills[index] = skill;
+      }
+    }
+    else {
+      data.skills.push(skill);
+    }
+    data.save(function(err){
+      cb(err, data.toObject());
+    });
+  });
+};
+
+api.deleteSkill = function(id, skillId, cb) {
+  User.findOne({_id: id}, function(err, data){
+    if (!data)
+      return cb(err);
+    data.skills = data.skills.filter(function(skill){
+      return skill._id != skillId;
+    });
+
+    data.save(function(err){
+      cb(err, data.toObject());
+    });
+  });
 };
 
 module.exports = api;

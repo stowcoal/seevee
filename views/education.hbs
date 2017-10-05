@@ -1,0 +1,14 @@
+{{> sidebar active="education"}}
+<div class="col-10 ml-sm-auto">
+  <div class="container-fluid py-2">
+    <button class='btn btn-success' onclick="$('#educationForm').submit();">New Education</button>
+    <form method="post" action="/education" id="educationForm" hidden></form>
+    <ul class="list-group py-2">
+      {{#each session.user.education}}
+      <li class="list-group-item">
+        <a href="/education/{{this._id}}">{{#if this.institution}}{{this.institution}}{{else}}New Education{{/if}}</a>
+      </li>
+      {{/each}}
+    </ul>
+  </div>
+</div>

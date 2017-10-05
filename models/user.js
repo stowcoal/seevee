@@ -39,6 +39,27 @@ var userSchema = new mongoose.Schema(
         type: String
       }
     },
+    education: [
+      {
+        institution: {
+          type: String
+        },
+        degree: {
+          type: String
+        },
+        honors: {
+          type: String
+        },
+        graduation: {
+          month: {
+            type: String
+          },
+          year: {
+            type: Number
+          }
+        }
+      }
+    ],
     experiences: [
       {
         institution : {
@@ -70,6 +91,13 @@ var userSchema = new mongoose.Schema(
             }
           }
         ],
+      }
+    ],
+    skills: [
+      {
+        description: {
+          type: String
+        }
       }
     ]
   }
