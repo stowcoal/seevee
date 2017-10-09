@@ -36,7 +36,6 @@ describe('/users', function(){
     });
   });
 });
-
 describe('/signup', function(){
   it('should return 200', function(done){
     request(app)
@@ -85,6 +84,7 @@ describe('/signout', function(done){
       .get('/signout');
     req.cookies = Cookies;
     req.expect(303)
+      .expect('Location', '/signin')
       .end(function(err, res){
         Cookies = {};
         done();
@@ -93,16 +93,6 @@ describe('/signout', function(done){
 });
 
 describe('/signin', function(done){
-  it('should return 303 and set session', function(done){
-    request(app)
-      .post('/signin')
-      .send(user)
-      .expect(303)
-      .end(function(err, res){
-        Cookies = res.headers['set-cookie'].pop().split(';')[0];
-        done();
-      });
-  });
   it('should return 303 and have error when invalid credentials', function(done){
     request(app)
       .post('/signin')
@@ -110,7 +100,18 @@ describe('/signin', function(done){
       .expect(303)
       .expect('Location', '/signin?err=Invalid%20credentials')
       .end(done)
-  })
+  });
+  it('should return 303 and set session', function(done){
+    request(app)
+      .post('/signin')
+      .send(user)
+      .expect(303)
+      .expect('Location', '/profile')
+      .end(function(err, res){
+        Cookies = res.headers['set-cookie'].pop().split(';')[0];
+        done();
+      });
+  });
 });
 
 describe('/profile', function(done){
@@ -120,10 +121,28 @@ describe('/profile', function(done){
     req.expect(200, done);
   });
   it('should return 303', function(done){
+    var profile = {
+      first_name: 'Test',
+      last_name: 'Testerson',
+      street: '123 Fake St',
+      city: 'Faketown',
+      state: 'AL',
+      zip: '55555',
+      phone: '555-555-5555',
+      email: 'test@fake.com'
+    };
     var req = request(app).post('/profile');
     req.cookies = Cookies;
-    req.send(user)
-      .expect(303, done);
+    req.send(profile)
+      .expect(303)
+      .expect('Location', '/profile')
+      .end(function(err, res){
+        User.findOne({username: user.username}, function(err, data){
+          user = data;
+          expect(data.profile).to.deep.include(profile);
+          done();
+        });
+      })
   });
 });
 
@@ -134,29 +153,53 @@ describe('/experience', function(done){
     req.expect(200, done);
   })
   it('should return 303', function(done){
+    var experience = {
+      institution: 'test',
+      role: 'test',
+      start: {
+        month: 'January',
+        year: 2017
+      },
+      end: {
+        month: 'December',
+        year: 2017
+      }
+    };
     var req = request(app).post('/experience');
     req.cookies = Cookies;
-    req.send({institution: 'test', role: 'test'})
+    req.send(experience)
       .expect(303)
       .end(function(err, res){
         User.findOne({username: user.username}, function(err, data){
           user = data;
-          expect(data.experiences[0].role).to.equal('test');
-          expect(data.experiences[0].institution).to.equal('test');
+          expect(data.experiences[0].toJSON()).to.deep.include(experience);
           done();
         });
       });
   });
-  it('should return 303 and change the role and institution', function(done){
+  it('should return 303 and change the experience', function(done){
+    var experience = {
+      institution: 'changed',
+      role: 'changed',
+      start: {
+        month: 'February',
+        year: 2016
+      },
+      end: {
+        month: 'March',
+        year: 2016
+      },
+      _id: user.experiences[0]._id
+    }
     var req = request(app).post('/experience');
     req.cookies = Cookies;
-    req.send({institution: 'changed', role: 'changed', _id: user.experiences[0]._id})
+    req.send(experience)
       .expect(303)
+      .expect('Location', '/experience/' + user.experiences[0]._id)
       .end(function(err, res){
         User.findOne({username: user.username}, function(err, data){
           user = data;
-          expect(data.experiences[0].role).to.equal('changed');
-          expect(data.experiences[0].institution).to.equal('changed');
+          expect(data.experiences[0].toJSON()).to.deep.include(experience);
           done();
         });
       });
@@ -164,10 +207,11 @@ describe('/experience', function(done){
 });
 
 describe('/experience/:id/detail', function(done){
-  it('should return 303', function(done){
+  it('should return 303 and return to experience and add an experience detail', function(done){
     var req = request(app).post('/experience/' + user.experiences[0]._id + '/detail');
     req.cookies = Cookies;
     req.expect(303)
+      .expect('Location', '/experience/' + user.experiences[0]._id)
       .end(function(err, res){
         User.findOne({username: user.username}, function(err, data){
           user = data;
@@ -177,16 +221,54 @@ describe('/experience/:id/detail', function(done){
       })
   });
   it('should return 303 and change the detail', function(done){
+    var detail = {
+      description: 'changed',
+      _id: user.experiences[0].details[0]._id
+    }
     var req = request(app).post('/experience/' + user.experiences[0]._id + '/detail');
     req.cookies = Cookies;
-    req.send({description: 'changed', _id: user.experiences[0].details[0]._id})
+    req.send(detail)
       .expect(303)
+      .expect('Location', '/experience/' + user.experiences[0]._id)
       .end(function(err, res){
         User.findOne({username: user.username}, function(err, data){
-          expect(data.experiences[0].details[0].description).to.equal('changed');
+          expect(data.experiences[0].details[0].toJSON()).to.deep.include(detail);
           done();
         });
     });
+  });
+  it('should return 303 and change the experience', function(done){
+    var experience = {
+      institution: 'changed',
+      role: 'changed',
+      start: {
+        month: 'February',
+        year: 2016
+      },
+      end: {
+        month: 'March',
+        year: 2016
+      },
+      details: [
+        {
+          description: 'changedagain',
+          _id: user.experiences[0].details[0]._id
+        }
+      ],
+      _id: user.experiences[0]._id
+    }
+    var req = request(app).post('/experience');
+    req.cookies = Cookies;
+    req.send(experience)
+      .expect(303)
+      .expect('Location', '/experience/' + user.experiences[0]._id)
+      .end(function(err, res){
+        User.findOne({username: user.username}, function(err, data){
+          user = data;
+          expect(data.experiences[0].toJSON()).to.deep.include(experience);
+          done();
+        });
+      });
   });
 });
 
@@ -196,13 +278,59 @@ describe('/education', function(done){
     req.cookies = Cookies;
     req.expect(200, done);
   });
-});
-
-describe('/education/:id', function(done){
+  it('should return 303 and create a new education record', function(done){
+    var education = {};
+    var req = request(app).post('/education');
+    req.cookies = Cookies;
+    req.expect(303);
+    req.end(function(err, res){
+        User.findOne({username: user.username}, function(err, data){
+          user = data;
+          expect(data.education.length).to.equal(1);
+          done();
+        });
+    });
+  });
+  it('should return 303 and change existing education record', function(done){
+    var education = {
+      _id: user.education[0]._id,
+      institution: 'Test University',
+      degree: 'Testology',
+      honors: 'Testest',
+      graduation: {
+        month: 'May',
+        year: 2013
+      }
+    };
+    var req = request(app).post('/education');
+    req.cookies = Cookies;
+    req.send(education)
+      .expect(303)
+      .end(function(err, res){
+        User.findOne({username: user.username}, function(err, data){
+          user = data;
+          expect(data.education[0].toJSON()).to.deep.include(education);
+          done();
+        });
+    });
+  });
   it('should return 200', function(done){
-    var req = request(app).get('/education/0');
+    var req = request(app).get('/education/' + user.education[0]._id);
     req.cookies = Cookies;
     req.expect(200, done);
+  });
+  it('should return 303 and delete education record', function(done){
+    var req = request(app).post('/education/' + user.education[0]._id + '/delete');
+    req.cookies = Cookies;
+    req.expect(303)
+      .expect('Location', '/education')
+      .end(function(err, res) {
+        User.findOne({username: user.username}, function(err, data){
+          user = data;
+          expect(data.education.length).to.equal(0);
+          done();
+        });
+      });
   });
 });
 
