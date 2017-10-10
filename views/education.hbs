@@ -6,7 +6,7 @@
     <ul class="list-group py-2">
       {{#each session.user.education}}
       <li class="list-group-item">
-        <a href="/education/{{this._id}}">{{#if this.institution}}{{this.institution}}{{else}}New Education{{/if}}</a>
+        <a href="/education/{{this._id}}">{{#if this.name}}{{this.name}}{{else}}New Education{{/if}}</a>
       </li>
       {{/each}}
     </ul>

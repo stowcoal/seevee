@@ -66,7 +66,7 @@ describe('/signup', function(done){
       .expect(303)
       .end(function(err, res){
         Cookies = res.headers['set-cookie'].pop().split(';')[0];
-        done();
+        done(err);
       });
   });
   it('should return 303 and return error when duplicate', function(done){
@@ -87,7 +87,7 @@ describe('/signout', function(done){
       .expect('Location', '/signin')
       .end(function(err, res){
         Cookies = {};
-        done();
+        done(err);
       });
   });
 });
@@ -109,7 +109,7 @@ describe('/signin', function(done){
       .expect('Location', '/profile')
       .end(function(err, res){
         Cookies = res.headers['set-cookie'].pop().split(';')[0];
-        done();
+        done(err);
       });
   });
 });
@@ -140,7 +140,7 @@ describe('/profile', function(done){
         User.findOne({username: user.username}, function(err, data){
           user = data;
           expect(data.profile).to.deep.include(profile);
-          done();
+          done(err);
         });
       })
   });
@@ -154,7 +154,7 @@ describe('/experience', function(done){
   })
   it('should return 303', function(done){
     var experience = {
-      institution: 'test',
+      name: 'test',
       role: 'test',
       start: {
         month: 'January',
@@ -173,13 +173,13 @@ describe('/experience', function(done){
         User.findOne({username: user.username}, function(err, data){
           user = data;
           expect(data.experiences[0].toJSON()).to.deep.include(experience);
-          done();
+          done(err);
         });
       });
   });
   it('should return 303 and change the experience', function(done){
     var experience = {
-      institution: 'changed',
+      name: 'changed',
       role: 'changed',
       start: {
         month: 'February',
@@ -200,7 +200,7 @@ describe('/experience', function(done){
         User.findOne({username: user.username}, function(err, data){
           user = data;
           expect(data.experiences[0].toJSON()).to.deep.include(experience);
-          done();
+          done(err);
         });
       });
   });
@@ -216,7 +216,7 @@ describe('/experience/:id/detail', function(done){
         User.findOne({username: user.username}, function(err, data){
           user = data;
           expect(data.experiences[0].details.length).to.equal(1);
-          done();
+          done(err);
         });
       })
   });
@@ -233,13 +233,13 @@ describe('/experience/:id/detail', function(done){
       .end(function(err, res){
         User.findOne({username: user.username}, function(err, data){
           expect(data.experiences[0].details[0].toJSON()).to.deep.include(detail);
-          done();
+          done(err);
         });
     });
   });
   it('should return 303 and change the experience', function(done){
     var experience = {
-      institution: 'changed',
+      name: 'changed',
       role: 'changed',
       start: {
         month: 'February',
@@ -266,7 +266,7 @@ describe('/experience/:id/detail', function(done){
         User.findOne({username: user.username}, function(err, data){
           user = data;
           expect(data.experiences[0].toJSON()).to.deep.include(experience);
-          done();
+          done(err);
         });
       });
   });
@@ -287,14 +287,14 @@ describe('/education', function(done){
         User.findOne({username: user.username}, function(err, data){
           user = data;
           expect(data.education.length).to.equal(1);
-          done();
+          done(err);
         });
     });
   });
   it('should return 303 and change existing education record', function(done){
     var education = {
       _id: user.education[0]._id,
-      institution: 'Test University',
+      name: 'Test University',
       degree: 'Testology',
       honors: 'Testest',
       graduation: {
@@ -310,7 +310,7 @@ describe('/education', function(done){
         User.findOne({username: user.username}, function(err, data){
           user = data;
           expect(data.education[0].toJSON()).to.deep.include(education);
-          done();
+          done(err);
         });
     });
   });
@@ -328,7 +328,7 @@ describe('/education', function(done){
         User.findOne({username: user.username}, function(err, data){
           user = data;
           expect(data.education.length).to.equal(0);
-          done();
+          done(err);
         });
       });
   });
@@ -349,7 +349,7 @@ describe('/skills', function(done){
         User.findOne({username: user.username}, function(err, data){
           user = data;
           expect(data.skills[0].description).to.equal('test');
-          done();
+          done(err);
         });
       });
   });
@@ -363,7 +363,7 @@ describe('/skills', function(done){
         User.findOne({username: user.username}, function(err, data){
           user = data;
           expect(data.skills[0].description).to.equal('changed');
-          done();
+          done(err);
         });
       });
   });
@@ -377,7 +377,7 @@ describe('/skills', function(done){
         User.findOne({username: user.username}, function(err, data){
           user = data;
           expect(data.skills[0].description).to.equal('changed again');
-          done();
+          done(err);
         });
       });
   });
@@ -390,7 +390,74 @@ describe('/skills', function(done){
         User.findOne({username: user.username}, function(err, data){
           user = data;
           expect(data.skills.length).to.equal(0);
-          done();
+          done(err);
+        });
+      });
+  });
+});
+
+describe('/resumes', function(done){
+  it('should return 200', function(done){
+    var req = request(app).get('/resumes');
+    req.cookies = Cookies;
+    req.expect(200, done)
+  });
+  it('should return 303 and add a new resume', function(done){
+    var req = request(app).post('/resumes')
+    req.cookies = Cookies;
+    req.send({})
+      .expect(303)
+      .end(function(err, res) {
+        User.findOne({username: user.username}, function(err, data){
+          user = data;
+          expect(data.resumes.length).to.equal(1);
+          done(err);
+      });
+    });
+  });
+  it('should return 200', function(done){
+    var req = request(app).get('/resumes/' + user.resumes[0]._id);
+    req.cookies = Cookies;
+    req.expect(200, done);
+  });
+  it('should update existing resume', function(done){
+    var resume = {
+      _id: user.resumes[0]._id,
+      name: 'Testume',
+      education: [
+        'test'
+      ],
+      experiences: [
+        'test'
+      ],
+      skills: [
+        'test'
+      ]
+    };
+    var req = request(app).post('/resumes');
+    req.cookies = Cookies;
+    req.send(resume)
+      .expect(303)
+      .expect('Location', '/resumes/' + resume._id)
+      .end(function(err, res){
+        User.findOne({username: user.username}, function(err, data){
+          user = data;
+          expect(data.resumes[0].toJSON()).to.deep.include(resume);
+          done(err);
+        });
+    });
+  });
+  it('should return 303 delete resume', function(done){
+    var req = request(app).post('/resumes/' + user.resumes[0]._id + '/delete');
+    req.cookies = Cookies;
+    req.send()
+      .expect(303)
+      .expect('Location', '/resumes')
+      .end(function(err, res) {
+        User.findOne({username: user.username}, function(err, data){
+          user = data;
+          expect(data.resumes.length).to.equal(0);
+          done(err);
         });
       });
   });
@@ -426,7 +493,7 @@ describe('/api', function(){
           expect(res.body).to.exist;
           expect(res.body).to.have.property('token');
           expect(res.body.token).to.contain('JWT ');
-          done();
+          done(err);
         });
     });
   });

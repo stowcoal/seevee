@@ -1,0 +1,14 @@
+{{> sidebar active="resumes"}}
+<div class="col-10 ml-sm-auto">
+  <div class="container-fluid py-2">
+    <button class='btn btn-success' onclick="$('#experienceForm').submit();">New Resume</button>
+    <form method="post" action="/resumes" id="experienceForm" hidden></form>
+    <ul class="list-group py-2">
+      {{#each session.user.resumes}}
+      <li class="list-group-item">
+        <a href="/resumes/{{this._id}}">{{#if this.name}}{{this.name}}{{else}}New Resume{{/if}}</a>
+      </li>
+      {{/each}}
+    </ul>
+  </div>
+</div>

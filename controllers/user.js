@@ -219,4 +219,42 @@ api.deleteSkill = function(id, skillId, cb) {
   });
 };
 
+api.upsertResume = function(id, resume, cb) {
+  User.findOne({_id: id}, function(err, data){
+    if (!data)
+      return cb(err);
+    if (!resume)
+      return cb(err);
+    if (resume._id){
+      console.log(resume);
+      var index = data.resumes.findIndex(function(r){
+        return r._id == resume._id;
+      });
+      if (index > -1){
+        data.resumes[index] = resume;
+      }
+    }
+    else {
+      data.resumes.push(resume);
+    }
+    data.save(function(err){
+      cb(err, data.toObject());
+    });
+  });
+};
+
+api.deleteResume = function(id, resumeId, cb) {
+  User.findOne({_id: id}, function(err, data){
+    if (!data)
+      return cb(err);
+    data.resumes = data.resumes.filter(function(resume){
+      return resume._id != resumeId;
+    });
+
+    data.save(function(err){
+      cb(err, data.toObject());
+    });
+  });
+};
+
 module.exports = api;
