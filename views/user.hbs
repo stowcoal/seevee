@@ -14,7 +14,7 @@
 {{/if}}
 {{#each user.education}}
       <div class="d-flex justify-content-between">
-        <div><em>{{this.institution}}</em></div>
+        <div><em>{{this.name}}</em></div>
         <div><em>{{this.graduation.month}} {{this.graduation.year}}</em></div>
       </div>
       <div>
@@ -40,7 +40,7 @@
         <div class=""><em>{{this.start.month}} {{this.start.year}}-{{this.end.month}} {{this.end.year}}</em></div>
       </div>
       <div>
-        {{this.institution}}
+        {{this.name}}
       </div>
       <ul>
 {{#each this.details}}

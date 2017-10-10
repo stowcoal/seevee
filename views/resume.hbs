@@ -20,7 +20,7 @@
     <div class="form-check">
       <label class="form-check-label">
         <input class="form-check-input" type="checkbox" value="{{this._id}}" name="experiences[]" {{#ifIn this._id ../resume.experiences}}checked{{/ifIn}}/>
-        {{this.name}}
+        {{this.name}} - {{this.role}}
       </label>
     </div>
 {{/each}}
@@ -36,5 +36,6 @@
   </form>
   <form method="post" action="/resumes/{{resume._id}}/delete" id="deleteForm" hidden></form>
   <button class="btn btn-primary" onclick="$('#upsertForm').submit();">Save</button>
+  <a class="btn btn-primary" href="/resumes/{{resume._id}}/preview">Preview</a>
   <button class="btn btn-danger float-right" onclick="$('#deleteForm').submit();">Delete</button>
 </div>
