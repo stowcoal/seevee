@@ -13,15 +13,17 @@
     <nav class="navbar navbar-expand-sm navbar-dark bg-dark">
       <a class="navbar-brand" href="/">Seevee</a>
       <ul class="navbar-nav mr-auto">
-        <li class="nav-item active">
-          <a class="nav-link" href="/">Home</a>
+        {{#tablist pagename}}
+        <li class="nav-item">
+          <a class="nav-link " href="/">Home</a>
         </li>
         <li class="nav-item">
-          <a class="nav-link" href="/about">About</a>
+          <a class="nav-link about" href="/about">About</a>
         </li>
         <li class="nav-item">
-          <a class="nav-link" href="/users">Users</a>
+          <a class="nav-link users" href="/users">Users</a>
         </li>
+        {{/tablist}}
       </ul>
       <form class="form-inline my-2 my-lg-0">
         <input class="form-control mr-sm-2" type="text" placeholder="Search" />

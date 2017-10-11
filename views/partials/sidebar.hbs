@@ -1,9 +1,23 @@
 <div class="col-2 bg-light p-2 sidebar">
   <ul class="nav flex-column nav-pills" role="tablist">
-    {{#tablist active}}
+    {{#tablist pagename}}
     <a class="nav-link profile" id="profile-tab" href="/profile" role="tab">Profile</a>
     <a class="nav-link education" id="education-tab" href="/education" role="tab">Education</a>
+    <ul>
+    {{#each session.user.education}}
+      <li style="display: block">
+        <a class="nav-link {{this._id}}" href="/education/{{this._id}}" role="tab">{{#if this.name}}{{this.name}}{{else}}New Education{{/if}}</a>
+      </li>
+    {{/each}}
+    </ul>
     <a class="nav-link experience" id="experience-tab" href="/experience" role="tab">Work</a>
+    <ul>
+    {{#each session.user.experiences}}
+      <li style="display: block">
+        <a class="nav-link {{this._id}}" href="/experience/{{this._id}}" role="tab">{{#if this.name}}{{this.name}}{{else}}New Experience{{/if}}</a>
+      </li>
+    {{/each}}
+    </ul>
     <a class="nav-link skills" id="skills-tab" href="/skills" role="tab">Skills</a>
     <a class="nav-link security" id="security-tab" href="/security" role="tab">Security</a>
     <a class="nav-link resumes" id="resumes-tab" href="/resumes" role="tab">Resumes</a>

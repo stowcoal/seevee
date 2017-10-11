@@ -42,6 +42,10 @@ app.use(function(req, res, next){
   next();
 });
 app.use(function(req, res, next){
+  res.locals.pagename = req.url.split('/').pop();
+  next();
+});
+app.use(function(req, res, next){
   res.locals.showTests = app.get('env') !== 'production' && req.query.test === '1';
   next();
 });
